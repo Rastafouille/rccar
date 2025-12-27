@@ -1,0 +1,21 @@
+frequency: 30
+sensor_timeout: 0.1
+two_d_mode: false
+
+map_frame: map
+odom_frame: vesc_odom
+base_link_frame: base_link
+world_frame: vesc_odom
+
+#publish the transform from the frame specified by the world_frame parameter to the frame specified by the base_link_frame parameter.
+
+#odom0: /vesc/odom
+#odom0_config: [true, true, false, false, false, true, true, true, false, false, false, true, false, false, false]
+#odom0_differential: false
+#odom0_queue_size: 10
+
+imu0: /sensors/imu/raw
+imu0_config: [false, false, false, true, true, true, false, false, false, true, true, true, true, true, true]
+imu0_remove_gravitational_acceleration: true
+imu0_differential: true
+imu0_queue_size: 30
