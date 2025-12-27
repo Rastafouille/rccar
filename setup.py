@@ -27,6 +27,8 @@ setup(
     entry_points={
         'console_scripts': [
             'autogap = rccar.autogap:main',
+            'autogap_simu = rccar.autogap_simu:main',
+
             'rviz_overlay = rccar.rviz_overlay_node:main',
             'ftg_node = rccar.ftg_node:main',   
             'odom_simu_publisher = rccar.odom_simu_publisher:main',

@@ -72,19 +72,19 @@ class AutoGap(Node):
 
         # Messages init
         self.pcl_msg = PointCloud()
-        #self.pcl_msg.header.frame_id = "map"
-        self.pcl_msg.header.frame_id = "odom"
+        self.pcl_msg.header.frame_id = "map"
+        #self.pcl_msg.header.frame_id = "odom"
 
 
-#        self.marker_cible = self.create_marker("ego_racecar/laser", 2, 0, [1.0, 0.0, 0.0])
-#        self.marker_loin = self.create_marker("ego_racecar/laser", 2, 1, [0.0, 1.0, 0.0])
-#        self.marker_collision = self.create_marker("ego_racecar/laser", 2, 2, [0.0, 0.0, 1.0])
-#       self.marker_zero = self.create_marker("ego_racecar/laser", 2, 3, [1.0, 0.0, 1.0])
+        self.marker_cible = self.create_marker("ego_racecar/laser", 2, 0, [1.0, 0.0, 0.0])
+        self.marker_loin = self.create_marker("ego_racecar/laser", 2, 1, [0.0, 1.0, 0.0])
+        self.marker_collision = self.create_marker("ego_racecar/laser", 2, 2, [0.0, 0.0, 1.0])
+        self.marker_zero = self.create_marker("ego_racecar/laser", 2, 3, [1.0, 0.0, 1.0])
 
-        self.marker_cible = self.create_marker("laser", 2, 0, [1.0, 0.0, 0.0])
-        self.marker_loin = self.create_marker("laser", 2, 1, [0.0, 1.0, 0.0])
-        self.marker_collision = self.create_marker("laser", 2, 2, [0.0, 0.0, 1.0])
-        self.marker_zero = self.create_marker("laser", 2, 3, [1.0, 0.0, 1.0])
+        #self.marker_cible = self.create_marker("laser", 2, 0, [1.0, 0.0, 0.0])
+        #self.marker_loin = self.create_marker("laser", 2, 1, [0.0, 1.0, 0.0])
+        #self.marker_collision = self.create_marker("laser", 2, 2, [0.0, 0.0, 1.0])
+        #self.marker_zero = self.create_marker("laser", 2, 3, [1.0, 0.0, 1.0])
 
         
         # QoS pour Lidar
@@ -137,7 +137,7 @@ class AutoGap(Node):
         try:
             # Récupérer la TF map -> base_link
             tf = self.tf_buffer.lookup_transform(
-                'odom', 'base_link',
+                'map', 'ego_racecar/base_link',
                 Time(), timeout=Duration(seconds=0.05)
             )
             t = tf.transform.translation
@@ -239,9 +239,9 @@ class AutoGap(Node):
             max_range = self.ranges[max_id]
             max_angle = self.angle_min + max_id * self.angle_increment
         else:
-            self.marker_collision.pose.position.x = 0.0
-            self.marker_collision.pose.position.y = 0.0
-            #self.marker_collision_pub.publish(self.marker_collision)
+            self.marker_collision.pose.position.x = 1000.0
+            self.marker_collision.pose.position.y = 1000.0
+            self.marker_collision_pub.publish(self.marker_collision)
 
         # Marker cible
         self.marker_cible.header.stamp = self.stamp
