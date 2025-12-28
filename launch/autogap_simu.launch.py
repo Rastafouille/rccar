@@ -8,15 +8,15 @@ def generate_launch_description():
     config_file = PathJoinSubstitution([
         FindPackageShare('rccar'),
         'config',
-        'autogap_lnpa.yaml'
+        'autogap_TRR.yaml'
     ])
 
     return LaunchDescription([
 
         Node(
             package='rccar',
-            executable='autogap',
-            name='autogap_node',
+            executable='autogap_simu',
+            name='autogap_simu_node',
             output='screen',
             parameters=[config_file]
         )

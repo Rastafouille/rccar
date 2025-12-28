@@ -2,7 +2,7 @@
   # general parameters shared by all vesc-related nodes
   ros__parameters:
     # erpm (electrical rpm) = speed_to_erpm_gain * speed (meters / second) + speed_to_erpm_offset
-    speed_to_erpm_gain: 4614.0 #4614.0
+    speed_to_erpm_gain: 4614.0 #4614.0 
     speed_to_erpm_offset: 0.0
 
     # servo value (0 to 1) =  steering_angle_to_servo_gain * steering angle (radians) + steering_angle_to_servo_offset
@@ -14,8 +14,8 @@
     duty_cycle_max: 0.0
     current_min: 0.0
     current_max: 100.0
-    brake_min: -3000.0 #-20000.0
-    brake_max: 3000.0 #200000.0
+    brake_min: -30000.0 #-20000.0
+    brake_max: 30000.0 #200000.0
     speed_min: -30000.0 #-23250.0
     speed_max: 30000.0 #23250.0
     position_min: 0.0

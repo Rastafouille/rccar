@@ -11,7 +11,7 @@ from visualization_msgs.msg import Marker
 from sensor_msgs.msg import LaserScan, PointCloud
 from ackermann_msgs.msg import AckermannDriveStamped
 
-#from pynput import keyboard
+from pynput import keyboard
 from rclpy.time import Time
 from rclpy.duration import Duration
 from tf2_ros import TransformListener, Buffer
@@ -29,13 +29,12 @@ class AutoGap(Node):
                 ('max_speed', 0.5), # m/s
                 ('max_steer', 0.36), # rad (20°)
                 ('angle_coef', 1.0), # coefficient pour l'angle de braquage
-                ('range_angle', math.radians(160)), # champ de vision en rad
+                ('range_angle', 160.0), # champ de vision en rad
                 ('dist_critique', 2.0), # distance en dessous de laquelle on réduit la vitesse
                 ('dist_secu', 0.3), # distance de sécurité latérale pour obstacle proche
-                ('angle_decalage', math.radians(35)), # angle de décalage pour obstacle proche
-                ('angle_decalage_delta', math.radians(15)), # angle de décalage qui augmente avec la proximité
+                ('angle_decalage', 35.0), # angle de décalage pour obstacle proche
                 ('distance_obst', 3.0), # distance en dessous de laquelle un obstacle est considéré proche
-                ('range_angle_obst', math.radians(180)),    # champ de vision pour obstacle proche
+                ('range_angle_obst', 180.0),    # champ de vision pour obstacle proche
             ]
         )
 
@@ -43,14 +42,12 @@ class AutoGap(Node):
         self.MAX_SPEED = self.get_parameter('max_speed').value
         self.MAX_STEER = self.get_parameter('max_steer').value
         self.ANGLE_COEF = self.get_parameter('angle_coef').value
-        self.RANGE_ANGLE = self.get_parameter('range_angle').value
+        self.RANGE_ANGLE = math.radians(self.get_parameter('range_angle').value)
         self.DIST_CRITIQUE = self.get_parameter('dist_critique').value
         self.DIST_SECU = self.get_parameter('dist_secu').value
-        self.ANGLE_DECALAGE = self.get_parameter('angle_decalage').value
-        self.ANGLE_DECALAGE_DELTA = self.get_parameter('angle_decalage_delta').value
+        self.ANGLE_DECALAGE = math.radians(self.get_parameter('angle_decalage').value)
         self.DISTANCE_OBST = self.get_parameter('distance_obst').value
-        self.RANGE_ANGLE_OBST = self.get_parameter('range_angle_obst').value
-
+        self.RANGE_ANGLE_OBST = math.radians(self.get_parameter('range_angle_obst').value)
         # Variables
         self.RANGE_ID = 0
         self.ID_DECALAGE = 0
@@ -59,7 +56,7 @@ class AutoGap(Node):
         self.ranges = []
         self.angle_increment = 0.0
         self.angle_min = 0.0
-        self.is_moving = True
+        self.is_moving = False
 
         # Publishers
         self.pcl_pub = self.create_publisher(PointCloud, '/traj', 1)
@@ -76,10 +73,10 @@ class AutoGap(Node):
         self.pcl_msg.header.frame_id = "odom"
 
 
-#        self.marker_cible = self.create_marker("ego_racecar/laser", 2, 0, [1.0, 0.0, 0.0])
-#        self.marker_loin = self.create_marker("ego_racecar/laser", 2, 1, [0.0, 1.0, 0.0])
-#        self.marker_collision = self.create_marker("ego_racecar/laser", 2, 2, [0.0, 0.0, 1.0])
-#       self.marker_zero = self.create_marker("ego_racecar/laser", 2, 3, [1.0, 0.0, 1.0])
+        #self.marker_cible = self.create_marker("ego_racecar/laser", 2, 0, [1.0, 0.0, 0.0])
+        #self.marker_loin = self.create_marker("ego_racecar/laser", 2, 1, [0.0, 1.0, 0.0])
+        #self.marker_collision = self.create_marker("ego_racecar/laser", 2, 2, [0.0, 0.0, 1.0])
+        #self.marker_zero = self.create_marker("ego_racecar/laser", 2, 3, [1.0, 0.0, 1.0])
 
         self.marker_cible = self.create_marker("laser", 2, 0, [1.0, 0.0, 0.0])
         self.marker_loin = self.create_marker("laser", 2, 1, [0.0, 1.0, 0.0])
@@ -98,8 +95,8 @@ class AutoGap(Node):
         self.timer = self.create_timer(0.1, self.add_point_traj)
 
         # Keyboard
-        #self.keyboard_listener = keyboard.Listener(on_press=self.on_key_press)
-        #self.keyboard_listener.start()
+        self.keyboard_listener = keyboard.Listener(on_press=self.on_key_press)
+        self.keyboard_listener.start()
 
         # TF
         self.tf_buffer = Buffer()
@@ -107,19 +104,19 @@ class AutoGap(Node):
 
         self.get_logger().info("AutoGap initialisé (fixed_frame = odom)")
 
-    # def on_key_press(self, key):
-    #     try:
-    #         if key == keyboard.Key.space:
-    #             self.is_moving = not self.is_moving
-    #             status = "moving" if self.is_moving else "stopped"
-    #             self.get_logger().info(f"SPACE pressed: {status}")
-    #             if not self.is_moving:
-    #                 stop = AckermannDriveStamped()
-    #                 stop.drive.steering_angle = 0.0
-    #                 stop.drive.speed = 0.0
-    #                 self.drive_pub.publish(stop)
-    #     except Exception as e:
-    #         self.get_logger().error(f"Key press error: {e}") 
+    def on_key_press(self, key):
+            try:
+                if key == keyboard.Key.space:
+                    self.is_moving = not self.is_moving
+                    status = "moving" if self.is_moving else "stopped"
+                    self.get_logger().info(f"SPACE pressed: {status}")
+                    if not self.is_moving:
+                        stop = AckermannDriveStamped()
+                        stop.drive.steering_angle = 0.0
+                        stop.drive.speed = 0.0
+                        self.drive_pub.publish(stop)
+            except Exception as e:
+                self.get_logger().error(f"Key press error: {e}") 
 
     def create_marker(self, frame_id, marker_type, marker_id, color):
             marker = Marker()
@@ -137,7 +134,7 @@ class AutoGap(Node):
         try:
             # Récupérer la TF map -> base_link
             tf = self.tf_buffer.lookup_transform(
-                'odom', 'base_link',
+                'map', 'ego_racecar/base_link',
                 Time(), timeout=Duration(seconds=0.05)
             )
             t = tf.transform.translation
@@ -167,7 +164,6 @@ class AutoGap(Node):
         self.half_len = len(self.ranges) // 2
         self.RANGE_ID = round(self.RANGE_ANGLE / self.angle_increment)
         self.ID_DECALAGE = round(self.ANGLE_DECALAGE / self.angle_increment)
-        self.ID_DECALAGE_DELTA = round(self.ANGLE_DECALAGE_DELTA / self.angle_increment)
         self.RANGE_ID_OBST = round(self.RANGE_ANGLE_OBST / self.angle_increment)
 
 
@@ -239,9 +235,9 @@ class AutoGap(Node):
             max_range = self.ranges[max_id]
             max_angle = self.angle_min + max_id * self.angle_increment
         else:
-            self.marker_collision.pose.position.x = 0.0
-            self.marker_collision.pose.position.y = 0.0
-            #self.marker_collision_pub.publish(self.marker_collision)
+            self.marker_collision.pose.position.x = 1000.0
+            self.marker_collision.pose.position.y = 1000.0
+            self.marker_collision_pub.publish(self.marker_collision)
 
         # Marker cible
         self.marker_cible.header.stamp = self.stamp

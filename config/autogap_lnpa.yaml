@@ -1,38 +1,17 @@
-max_speed: 1 # vitesse maxAckermann m/s 
-max_steer: 0.36 # max en radian     
-dist_critique: 1.0 # distance avant de commencer a ralentir
-dist_secu: 0.5 #distance des obstacles
-
-#Valeur max et min du laser pour le calcul de la distance max
-min_id: 256
-max_id: 812
-        
-id_decalage: 100 #decalage si obstacles
-id_decalage_delta: 20 #decalage si obstacles
-distance_obst: 6 #rayon des points pris en compte pour le calcul obstacle
-angle_coef: 1.1 #coef entre l'angle cible et l'angle de consigne
-
-
-# Joystick indices for toggling mux
-auto_button_idx: 5 # R1 button  
+/**:
+  ros__parameters:
+    max_speed: 1.0 # m/s
+    max_steer: 0.36 # rad (20°)
+    angle_coef: 1.0 # coefficient pour l'angle de braquage
+    range_angle: 160.0 # champ de vision en rad
+    dist_critique: 2.0 # distance en dessous de laquelle on réduit la vitesse
+    dist_secu: 0.3 # distance de sécurité latérale pour obstacle proche
+    angle_decalage: 35.0 # angle de décalage pour obstacle proche
+    angle_decalage_delta: 15.0 # angle de décalage qui augmente avec la proximité
+    distance_obst: 3.0 # distance en dessous de laquelle un obstacle est considéré proche
+    range_angle_obst: 180.0 # champ de vision pour obstacle proche
 
 
-
-
-# 10s
-#max_speed: 9 # vitesse maxAckermann m/s 
-#max_steer: 0.36 # max en radian     
-#dist_critique: 1.5 # distance avant de commencer a ralentir
-#dist_secu: 0.3 #distance des obstacles
-
-#Valeur max et min du laser pour le calcul de la distance max
-#min_id: 256
-#max_id: 812
-        
-#id_decalage: 100 #decalage si obstacles
-#id_decalage_delta: 20 #decalage si obstacles
-#distance_obst: 4 #rayon des points pris en compte pour le calcul obstacle
-#angle_coef: 1.1 #coef entre l'angle cible et l'angle de consigne
-
-
+    # Joystick indices for toggling mux OBSOLETE?
+    auto_button_idx: 5 # R1 button  
 
